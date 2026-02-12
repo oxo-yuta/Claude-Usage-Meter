@@ -136,32 +136,67 @@ jobs:
 
       - name: Update appcast.xml
         run: |
-          VERSION="${{ steps.get_version.outputs.VERSION }}"
-          DATE=$(date -u +"%a, %d %b %Y %H:%M:%S %z")
-          DOWNLOAD_URL="https://github.com/oxo-yuta/Claude-Usage-Meter/releases/download/v${VERSION}/ClaudeUsageMeter-${VERSION}.dmg"
+          export VERSION="${{ steps.get_version.outputs.VERSION }}"
+          export DATE=$(date -u +"%a, %d %b %Y %H:%M:%S %z")
+          export DOWNLOAD_URL="https://github.com/oxo-yuta/Claude-Usage-Meter/releases/download/v${VERSION}/ClaudeUsageMeter-${VERSION}.dmg"
 
-          cat > appcast.xml << EOF
-          <?xml version="1.0" encoding="utf-8"?>
+          # Python script to update appcast.xml
+          python3 << 'PYTHON_SCRIPT'
+          import os
+          import sys
+
+          version = os.environ['VERSION']
+          date = os.environ['DATE']
+          download_url = os.environ['DOWNLOAD_URL']
+          signature = os.environ['APPCAST_SIGNATURE']
+          dmg_size = os.environ['DMG_SIZE']
+
+          new_item = f'''    <item>
+              <title>Version {version}</title>
+              <pubDate>{date}</pubDate>
+              <sparkle:version>{version}</sparkle:version>
+              <sparkle:shortVersionString>{version}</sparkle:shortVersionString>
+              <enclosure
+                url="{download_url}"
+                sparkle:edSignature="{signature}"
+                length="{dmg_size}"
+                type="application/octet-stream" />
+            </item>'''
+
+          appcast_file = 'appcast.xml'
+
+          if os.path.exists(appcast_file):
+              # Read existing file
+              with open(appcast_file, 'r') as f:
+                  content = f.read()
+
+              # Insert new item after <language>en</language>
+              marker = '<language>en</language>'
+              if marker in content:
+                  parts = content.split(marker, 1)
+                  updated_content = parts[0] + marker + '\n' + new_item + '\n' + parts[1]
+              else:
+                  print("Error: Could not find language marker in appcast.xml")
+                  sys.exit(1)
+
+              with open(appcast_file, 'w') as f:
+                  f.write(updated_content)
+          else:
+              # Create new appcast.xml
+              content = f'''<?xml version="1.0" encoding="utf-8"?>
           <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
             <channel>
               <title>Claude Usage Meter</title>
               <link>https://github.com/oxo-yuta/Claude-Usage-Meter</link>
               <description>Most recent updates to Claude Usage Meter</description>
               <language>en</language>
-              <item>
-                <title>Version ${VERSION}</title>
-                <pubDate>${DATE}</pubDate>
-                <sparkle:version>${VERSION}</sparkle:version>
-                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
-                <enclosure
-                  url="${DOWNLOAD_URL}"
-                  sparkle:edSignature="${APPCAST_SIGNATURE}"
-                  length="${DMG_SIZE}"
-                  type="application/octet-stream" />
-              </item>
+          {new_item}
             </channel>
           </rss>
-          EOF
+          '''
+              with open(appcast_file, 'w') as f:
+                  f.write(content)
+          PYTHON_SCRIPT
 
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
