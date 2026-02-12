@@ -43,7 +43,7 @@ jobs:
           cp Resources/AppIcon.icns "$APP_DIR/Contents/Resources/AppIcon.icns"
 
           # Update Info.plist with Sparkle public key
-          sed "s/SPARKLE_PUBLIC_KEY_PLACEHOLDER/$SPARKLE_PUBLIC_KEY/g" Resources/Info.plist > "$APP_DIR/Contents/Info.plist"
+          sed "s|SPARKLE_PUBLIC_KEY_PLACEHOLDER|$SPARKLE_PUBLIC_KEY|g" Resources/Info.plist > "$APP_DIR/Contents/Info.plist"
 
           codesign --force --deep --sign - "$APP_DIR"
 
