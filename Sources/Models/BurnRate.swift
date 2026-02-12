@@ -10,7 +10,7 @@ struct BurnRate {
 
     var usagePercent: Double {
         guard costLimit > 0 else { return 0 }
-        return min(currentCost / costLimit * 100, 100)
+        return currentCost / costLimit * 100
     }
 
     var projectedPercent: Double {
