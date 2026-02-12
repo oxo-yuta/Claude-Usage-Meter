@@ -60,14 +60,24 @@ jobs:
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           APP_DIR="dist/Claude Usage Meter.app"
-          mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
+          mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources" "$APP_DIR/Contents/Frameworks"
 
           cp .build/release/ClaudeUsageMeter "$APP_DIR/Contents/MacOS/ClaudeUsageMeter"
           cp Resources/AppIcon.icns "$APP_DIR/Contents/Resources/AppIcon.icns"
 
+          # Copy Sparkle.framework from build artifacts
+          SPARKLE_FW=$(find .build -name "Sparkle.framework" -path "*/release/*" -type d | head -1)
+          if [ -d "$SPARKLE_FW" ]; then
+            cp -R "$SPARKLE_FW" "$APP_DIR/Contents/Frameworks/"
+          fi
+
           # Update Info.plist with Sparkle public key
           sed "s|SPARKLE_PUBLIC_KEY_PLACEHOLDER|$SPARKLE_PUBLIC_KEY|g" Resources/Info.plist > "$APP_DIR/Contents/Info.plist"
 
+          # Add rpath for Frameworks directory
+          install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_DIR/Contents/MacOS/ClaudeUsageMeter"
+
+          # Sign the bundle
           codesign --force --deep --sign - "$APP_DIR"
 
       - name: Create DMG
