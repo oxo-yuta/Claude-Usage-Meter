@@ -33,7 +33,14 @@ Claude Codeのトークン使用量をリアルタイムで監視するmacOSメ�
 
 [Releases](https://github.com/oxo-yuta/Claude-Usage-Meter/releases) からDMGをダウンロードし、アプリをApplicationsフォルダにドラッグ&ドロップ。
 
-> 署名されていないため、初回起動時は **右クリック → 開く** で起動してください。
+> **初回起動時の注意**: Apple Developer署名がないため、Gatekeeperにブロックされます。
+> Applicationsにコピー後、ターミナルで以下を実行してください：
+>
+> ```bash
+> xattr -cr /Applications/Claude\ Usage\ Meter.app
+> ```
+>
+> その後、通常通りアプリを起動できます。
 
 ### ソースからビルド
 
