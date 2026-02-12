@@ -137,11 +137,6 @@ struct SettingsView: View {
                     Link(L10n.reportIssue, destination: URL(string: "https://github.com/oxo-yuta/Claude-Usage-Meter/issues/new")!)
                         .font(.subheadline)
                 }
-
-                // Buy me a coffee
-                Link(L10n.buyMeACoffee, destination: URL(string: "https://github.com/sponsors/oxo-yuta")!)
-                    .font(.subheadline)
-                    .foregroundStyle(.orange)
             }
 
             Divider()
