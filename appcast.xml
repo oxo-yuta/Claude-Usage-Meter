@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Claude Usage Meter</title>
+    <link>https://github.com/oxo-yuta/Claude-Usage-Meter</link>
+    <description>Most recent updates to Claude Usage Meter</description>
+    <language>en</language>
+    <item>
+      <title>Version 1.2.1</title>
+      <pubDate>Thu, 12 Feb 2026 04:56:50 +0000</pubDate>
+      <sparkle:version>1.2.1</sparkle:version>
+      <sparkle:shortVersionString>1.2.1</sparkle:shortVersionString>
+      <enclosure
+        url="https://github.com/oxo-yuta/Claude-Usage-Meter/releases/download/v1.2.1/ClaudeUsageMeter-1.2.1.dmg"
+        sparkle:edSignature="o/C/SgJOVh8DSnypZTCSLf74sWBXOY1RJ3+Jg29Y61ekv0McqHwJUHRU1eLUsbWITVFPnZaWMZ36/QfzIzz0Aw=="
+        length="485280"
+        type="application/octet-stream" />
+    </item>
+  </channel>
+</rss>
