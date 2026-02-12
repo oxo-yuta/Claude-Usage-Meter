@@ -63,7 +63,7 @@ jobs:
 
       - name: Generate appcast signature
         run: |
-          pip3 install pynacl
+          pip3 install --break-system-packages pynacl
 
           cat > sign.py <<'EOF'
           import sys, base64
