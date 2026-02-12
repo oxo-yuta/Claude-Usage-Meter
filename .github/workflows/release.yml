@@ -64,7 +64,7 @@ jobs:
       - name: Generate appcast signature
         run: |
           brew install sparkle
-          SIGNATURE=$(/usr/local/Caskroom/sparkle/2.8.1/bin/sign_update "$DMG_PATH" "$SPARKLE_PRIVATE_KEY")
+          SIGNATURE=$(sparkle sign-update "$DMG_PATH" -s "$SPARKLE_PRIVATE_KEY")
           echo "APPCAST_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
 
           DMG_SIZE=$(stat -f%z "$DMG_PATH")
