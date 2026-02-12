@@ -135,4 +135,24 @@ enum L10n {
     static var checkForUpdates: String {
         language == .japanese ? "更新を確認" : "Check for Updates"
     }
+
+    // MARK: - About
+    static var about: String {
+        language == .japanese ? "について" : "About"
+    }
+    static var version: String {
+        language == .japanese ? "バージョン" : "Version"
+    }
+    static var reportIssue: String {
+        language == .japanese ? "問題を報告" : "Report Issue"
+    }
+    static var buyMeACoffee: String {
+        language == .japanese ? "コーヒーを奢る ☕" : "Buy Me a Coffee ☕"
+    }
+    static var viewOnGitHub: String {
+        language == .japanese ? "GitHubで見る" : "View on GitHub"
+    }
+    static var madeBy: String {
+        language == .japanese ? "作成者" : "Made by"
+    }
 }

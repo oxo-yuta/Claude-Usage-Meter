@@ -102,6 +102,51 @@ struct SettingsView: View {
                 .font(.subheadline)
             }
 
+            Divider()
+                .padding(.vertical, 4)
+
+            // About section
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L10n.about)
+                    .font(.body.weight(.medium))
+
+                // Version
+                HStack {
+                    Text("\(L10n.version):")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text(appVersion)
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+
+                // Made by
+                HStack {
+                    Text("\(L10n.madeBy):")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Link("oxo-yuta", destination: URL(string: "https://github.com/oxo-yuta")!)
+                        .font(.subheadline)
+                }
+
+                // Links
+                HStack(spacing: 12) {
+                    Link(L10n.viewOnGitHub, destination: URL(string: "https://github.com/oxo-yuta/Claude-Usage-Meter")!)
+                        .font(.subheadline)
+
+                    Link(L10n.reportIssue, destination: URL(string: "https://github.com/oxo-yuta/Claude-Usage-Meter/issues/new")!)
+                        .font(.subheadline)
+                }
+
+                // Buy me a coffee
+                Link(L10n.buyMeACoffee, destination: URL(string: "https://github.com/sponsors/oxo-yuta")!)
+                    .font(.subheadline)
+                    .foregroundStyle(.orange)
+            }
+
+            Divider()
+                .padding(.vertical, 4)
+
             // Quit button
             HStack {
                 Spacer()
@@ -111,5 +156,9 @@ struct SettingsView: View {
                 .font(.subheadline)
             }
         }
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
     }
 }
