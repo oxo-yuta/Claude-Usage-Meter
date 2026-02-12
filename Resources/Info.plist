@@ -7,7 +7,7 @@
     <key>CFBundleName</key>
     <string>Claude Usage Meter</string>
     <key>CFBundleIdentifier</key>
-    <string>com.yuta.claude-usage-meter</string>
+    <string>com.github.oxo-yuta.claude-usage-meter</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>

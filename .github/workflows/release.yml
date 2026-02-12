@@ -28,15 +28,10 @@ jobs:
       - name: Build release
         run: swift build -c release
 
-      - name: Generate Sparkle EdDSA key pair
+      - name: Set Sparkle keys from secrets
         run: |
-          brew install sparkle
-          sparkle generate-keys > sparkle_keys.txt
-          cat sparkle_keys.txt
-          PUBLIC_KEY=$(grep "public key" sparkle_keys.txt | awk '{print $NF}')
-          PRIVATE_KEY=$(grep "private key" sparkle_keys.txt | awk '{print $NF}')
-          echo "SPARKLE_PUBLIC_KEY=$PUBLIC_KEY" >> $GITHUB_ENV
-          echo "SPARKLE_PRIVATE_KEY=$PRIVATE_KEY" >> $GITHUB_ENV
+          echo "SPARKLE_PUBLIC_KEY=${{ secrets.SPARKLE_PUBLIC_KEY }}" >> $GITHUB_ENV
+          echo "SPARKLE_PRIVATE_KEY=${{ secrets.SPARKLE_PRIVATE_KEY }}" >> $GITHUB_ENV
 
       - name: Create app bundle
         run: |
@@ -68,7 +63,8 @@ jobs:
 
       - name: Generate appcast signature
         run: |
-          SIGNATURE=$(sparkle sign-update "$DMG_PATH" -s "$SPARKLE_PRIVATE_KEY")
+          brew install sparkle
+          SIGNATURE=$(/usr/local/Caskroom/sparkle/2.8.1/bin/sign_update "$DMG_PATH" "$SPARKLE_PRIVATE_KEY")
           echo "APPCAST_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
 
           DMG_SIZE=$(stat -f%z "$DMG_PATH")
