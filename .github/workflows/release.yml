@@ -63,8 +63,35 @@ jobs:
 
       - name: Generate appcast signature
         run: |
-          brew install sparkle
-          SIGNATURE=$(sparkle sign-update "$DMG_PATH" -s "$SPARKLE_PRIVATE_KEY")
+          # Install eddsa library for signing
+          pip3 install pynacl
+
+          # Create signing script
+          cat > sign.py << 'PYEOF'
+import sys
+import base64
+import hashlib
+from nacl.signing import SigningKey
+from nacl.encoding import Base64Encoder
+
+def sign_file(file_path, private_key_b64):
+    # Decode private key
+    private_key_bytes = base64.b64decode(private_key_b64)
+    signing_key = SigningKey(private_key_bytes)
+
+    # Read file and compute signature
+    with open(file_path, 'rb') as f:
+        file_data = f.read()
+
+    signature = signing_key.sign(file_data).signature
+    signature_b64 = base64.b64encode(signature).decode('ascii')
+    print(signature_b64)
+
+if __name__ == '__main__':
+    sign_file(sys.argv[1], sys.argv[2])
+PYEOF
+
+          SIGNATURE=$(python3 sign.py "$DMG_PATH" "$SPARKLE_PRIVATE_KEY")
           echo "APPCAST_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
 
           DMG_SIZE=$(stat -f%z "$DMG_PATH")
