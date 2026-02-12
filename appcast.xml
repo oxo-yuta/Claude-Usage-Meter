@@ -6,14 +6,14 @@
     <description>Most recent updates to Claude Usage Meter</description>
     <language>en</language>
     <item>
-      <title>Version 1.2.2</title>
-      <pubDate>Thu, 12 Feb 2026 05:10:46 +0000</pubDate>
-      <sparkle:version>1.2.2</sparkle:version>
-      <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
+      <title>Version 1.2.3</title>
+      <pubDate>Thu, 12 Feb 2026 05:16:11 +0000</pubDate>
+      <sparkle:version>1.2.3</sparkle:version>
+      <sparkle:shortVersionString>1.2.3</sparkle:shortVersionString>
       <enclosure
-        url="https://github.com/oxo-yuta/Claude-Usage-Meter/releases/download/v1.2.2/ClaudeUsageMeter-1.2.2.dmg"
-        sparkle:edSignature="WX6JS/a5S3mi6fz+l29jwtAMV1wxjPaCUHgSHddB2+Zw4QozxKn3mSzEP+uMuYdoLGzC69qCH1aptQDT2XK7BA=="
-        length="713191"
+        url="https://github.com/oxo-yuta/Claude-Usage-Meter/releases/download/v1.2.3/ClaudeUsageMeter-1.2.3.dmg"
+        sparkle:edSignature="NcsxMO4VOCe3YGeWrMff9EMMlDEYYUq7OOj7IdojB35eSDuCG2m12pEz8fHxUEucoYyVhDH6l84U1JXSgt8JBA=="
+        length="1425064"
         type="application/octet-stream" />
     </item>
   </channel>
