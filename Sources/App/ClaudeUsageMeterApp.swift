@@ -1,12 +1,16 @@
 import SwiftUI
+import Sparkle
 
 @main
 struct ClaudeUsageMeterApp: App {
     @State private var appState = AppState()
+    private let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
 
     init() {
         // Hide from Dock (equivalent to LSUIElement=YES)
         NSApplication.shared.setActivationPolicy(.accessory)
+        // Connect updater to app state
+        appState.updaterController = updaterController
     }
 
     var body: some Scene {

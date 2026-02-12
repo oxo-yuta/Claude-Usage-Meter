@@ -11,6 +11,10 @@
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>1.0.0</string>
+    <key>SUFeedURL</key>
+    <string>https://raw.githubusercontent.com/oxo-yuta/Claude-Usage-Meter/main/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>SPARKLE_PUBLIC_KEY_PLACEHOLDER</string>
 </dict>
 </plist>

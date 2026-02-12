@@ -132,4 +132,7 @@ enum L10n {
     static var notifications: String {
         language == .japanese ? "通知" : "Notifications"
     }
+    static var checkForUpdates: String {
+        language == .japanese ? "更新を確認" : "Check for Updates"
+    }
 }

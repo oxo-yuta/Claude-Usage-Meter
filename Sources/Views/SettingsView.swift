@@ -93,6 +93,15 @@ struct SettingsView: View {
                     .font(.subheadline)
             }
 
+            // Check for updates button
+            HStack {
+                Spacer()
+                Button(L10n.checkForUpdates) {
+                    appState.checkForUpdates()
+                }
+                .font(.subheadline)
+            }
+
             // Quit button
             HStack {
                 Spacer()

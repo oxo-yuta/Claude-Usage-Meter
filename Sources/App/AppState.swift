@@ -2,9 +2,11 @@ import Foundation
 import ServiceManagement
 import SwiftUI
 import UserNotifications
+import Sparkle
 
 @Observable
 final class AppState {
+    weak var updaterController: SPUStandardUpdaterController?
     var currentBlock: SessionBlock?
     var allBlocks: [SessionBlock] = []
     var burnRate: BurnRate = .zero
@@ -97,6 +99,10 @@ final class AppState {
     func setNotificationsEnabled(_ enabled: Bool) {
         notificationsEnabled = enabled
         saveSettings()
+    }
+
+    func checkForUpdates() {
+        updaterController?.updater.checkForUpdates()
     }
 
     // MARK: - Notifications

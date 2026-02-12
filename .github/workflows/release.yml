@@ -1,0 +1,133 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "5.10"
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update version in Info.plist
+        run: |
+          sed -i '' "s/1.0.0/${{ steps.get_version.outputs.VERSION }}/g" Resources/Info.plist
+
+      - name: Build release
+        run: swift build -c release
+
+      - name: Generate Sparkle EdDSA key pair
+        run: |
+          brew install sparkle
+          /opt/homebrew/bin/generate_keys > sparkle_keys.txt
+          cat sparkle_keys.txt
+          PUBLIC_KEY=$(grep "Public EdDSA key:" sparkle_keys.txt | cut -d' ' -f4)
+          PRIVATE_KEY=$(grep "Private EdDSA key:" sparkle_keys.txt | cut -d' ' -f4)
+          echo "SPARKLE_PUBLIC_KEY=$PUBLIC_KEY" >> $GITHUB_ENV
+          echo "SPARKLE_PRIVATE_KEY=$PRIVATE_KEY" >> $GITHUB_ENV
+
+      - name: Create app bundle
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          APP_DIR="dist/Claude Usage Meter.app"
+          mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
+
+          cp .build/release/ClaudeUsageMeter "$APP_DIR/Contents/MacOS/ClaudeUsageMeter"
+          cp Resources/AppIcon.icns "$APP_DIR/Contents/Resources/AppIcon.icns"
+
+          # Update Info.plist with Sparkle public key
+          sed "s/SPARKLE_PUBLIC_KEY_PLACEHOLDER/$SPARKLE_PUBLIC_KEY/g" Resources/Info.plist > "$APP_DIR/Contents/Info.plist"
+
+          codesign --force --deep --sign - "$APP_DIR"
+
+      - name: Create DMG
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          DMG_NAME="ClaudeUsageMeter-${VERSION}.dmg"
+          STAGING_DIR="dmg-staging"
+
+          mkdir -p "$STAGING_DIR"
+          cp -R "dist/Claude Usage Meter.app" "$STAGING_DIR/"
+          ln -s /Applications "$STAGING_DIR/Applications"
+
+          hdiutil create -volname "Claude Usage Meter" -srcfolder "$STAGING_DIR" -ov -format UDZO "$DMG_NAME"
+
+          echo "DMG_PATH=$DMG_NAME" >> $GITHUB_ENV
+
+      - name: Generate appcast signature
+        run: |
+          brew install sparkle
+          SIGNATURE=$(/opt/homebrew/bin/sign_update "$DMG_PATH" -f "$SPARKLE_PRIVATE_KEY")
+          echo "APPCAST_SIGNATURE=$SIGNATURE" >> $GITHUB_ENV
+
+          DMG_SIZE=$(stat -f%z "$DMG_PATH")
+          echo "DMG_SIZE=$DMG_SIZE" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.DMG_PATH }}
+          body: |
+            ## Claude Usage Meter v${{ steps.get_version.outputs.VERSION }}
+
+            ### Install
+            1. Download DMG
+            2. Drag app to Applications
+            3. Run in terminal:
+               ```bash
+               xattr -cr /Applications/Claude\ Usage\ Meter.app
+               ```
+            4. Launch the app
+
+            ### Auto-update
+            This version includes Sparkle auto-update support. Future updates can be installed with one click.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update appcast.xml
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          DATE=$(date -u +"%a, %d %b %Y %H:%M:%S %z")
+          DOWNLOAD_URL="https://github.com/oxo-yuta/Claude-Usage-Meter/releases/download/v${VERSION}/ClaudeUsageMeter-${VERSION}.dmg"
+
+          cat > appcast.xml << EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <channel>
+              <title>Claude Usage Meter</title>
+              <link>https://github.com/oxo-yuta/Claude-Usage-Meter</link>
+              <description>Most recent updates to Claude Usage Meter</description>
+              <language>en</language>
+              <item>
+                <title>Version ${VERSION}</title>
+                <pubDate>${DATE}</pubDate>
+                <sparkle:version>${VERSION}</sparkle:version>
+                <sparkle:shortVersionString>${VERSION}</sparkle:shortVersionString>
+                <enclosure
+                  url="${DOWNLOAD_URL}"
+                  sparkle:edSignature="${APPCAST_SIGNATURE}"
+                  length="${DMG_SIZE}"
+                  type="application/octet-stream" />
+              </item>
+            </channel>
+          </rss>
+          EOF
+
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout main
+          git add appcast.xml
+          git commit -m "Update appcast for v${VERSION}"
+          git push origin main
