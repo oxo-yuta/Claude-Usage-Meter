@@ -152,4 +152,14 @@ enum L10n {
     static var madeBy: String {
         language == .japanese ? "作成者" : "Made by"
     }
+
+    // MARK: - Data Source Info
+    static var dataSourceTitle: String {
+        language == .japanese ? "データソースについて" : "About Data Source"
+    }
+    static var dataSourceDescription: String {
+        language == .japanese
+            ? "このアプリはローカルファイル（~/.claude/projects/）からデータを読み取っています。複数のデバイスで同じClaudeアカウントを使用している場合、このデバイスの使用量のみが表示されます。"
+            : "This app reads data from local files (~/.claude/projects/). If you use the same Claude account on multiple devices, only this device's usage is shown."
+    }
 }

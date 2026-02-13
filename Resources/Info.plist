@@ -17,7 +17,7 @@
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.3.4</string>
     <key>SUFeedURL</key>
     <string>https://raw.githubusercontent.com/oxo-yuta/Claude-Usage-Meter/main/appcast.xml</string>
     <key>SUPublicEDKey</key>

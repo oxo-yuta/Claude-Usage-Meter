@@ -105,6 +105,25 @@ struct SettingsView: View {
             Divider()
                 .padding(.vertical, 4)
 
+            // Data Source Info
+            VStack(alignment: .leading, spacing: 8) {
+                Label(
+                    L10n.dataSourceTitle,
+                    systemImage: "info.circle"
+                )
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.secondary)
+
+                Text(L10n.dataSourceDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.vertical, 4)
+
+            Divider()
+                .padding(.vertical, 4)
+
             // About section
             VStack(alignment: .leading, spacing: 8) {
                 Text(L10n.about)
